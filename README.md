@@ -15,5 +15,6 @@ An example of a profile form with a simple validation for React Native. Please f
 
 You can also run this app with [Expo](https://expo.io/@vladimir_vovk/react-native-sample-profile).
 
-- Credits
-  <a target="_blank" href="https://icons8.com/icons/set/cat-profile">Cat Profile</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+## Credits
+
+- <a target="_blank" href="https://icons8.com/icons/set/cat-profile">Cat Profile</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
