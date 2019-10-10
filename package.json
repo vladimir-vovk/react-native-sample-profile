@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "expo": "^35.0.0",
-    "expo-av": "~7.0.0",
     "expo-image-picker": "~7.0.0",
     "mobx": "^5.14.0",
     "mobx-react": "^6.1.3",
