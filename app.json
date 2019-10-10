@@ -3,6 +3,7 @@
     "name": "React Native Sample Profile",
     "slug": "react-native-sample-profile",
     "description": "An example of a profile form with a simple validation for React Native.",
+    "githubUrl": "https://github.com/vladimir-vovk/react-native-sample-profile",
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
