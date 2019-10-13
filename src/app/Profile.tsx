@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Dimensions,
   StyleSheet,
   Text,
   View,
@@ -10,12 +11,14 @@ import {
   Keyboard,
   SafeAreaView
 } from 'react-native'
-import * as Permissions from 'expo-permissions'
+import * as Permissions from 'expo-permissions' // eslint-disable-line
 import * as ImagePicker from 'expo-image-picker'
+import { NavigationScreenProps } from 'react-navigation-stack'
 import { inject, observer } from 'mobx-react'
-import { TextInputField, Button } from '../core/ui'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { isPhoneValid, isEmailValid } from '../core/utils'
+import { TextInputField, Button } from '../core/ui'
+import { isIPhoneX, isPhoneValid, isEmailValid } from '../core/utils'
+import ProfileStore from './stores/ProfileStore'
 
 interface State {
   imageUri: string | null
@@ -25,8 +28,8 @@ interface State {
 }
 
 interface Props {
-  profileStore: any
-  navigation: any
+  profileStore: ProfileStore
+  navigation: NavigationScreenProps
   firstName: string
   lastName: string
   phone: string
@@ -53,13 +56,8 @@ class Profile extends React.PureComponent<Props, State> {
 
   async componentDidMount() {
     const {
-      firstName,
-      lastName,
-      phone,
-      email,
-      telegram,
-      avatar
-    } = this.props.profileStore
+      profileStore: { firstName, lastName, phone, email, telegram, avatar }
+    } = this.props
     this._formData = {
       firstName,
       lastName,
@@ -97,7 +95,7 @@ class Profile extends React.PureComponent<Props, State> {
     }
   }
 
-  _onSubmit = name => {
+  _onSubmit = (name: string) => {
     const fields = ['firstName', 'lastName', 'phone', 'email', 'telegram']
     const i = fields.indexOf(name)
     if (i < 0) {
@@ -111,18 +109,14 @@ class Profile extends React.PureComponent<Props, State> {
     this.setState({ currentField: fields[i + 1] })
   }
 
-  _onChangeText = (text, name) => {
+  _onChangeText = (text: string, name: string) => {
     this._formData[name] = text
     this._validateForm()
   }
 
-  _isPhoneValid = phone => {
-    return isPhoneValid(phone)
-  }
+  _isPhoneValid = (phone: string) => isPhoneValid(phone)
 
-  _isEmailValid = email => {
-    return isEmailValid(email)
-  }
+  _isEmailValid = (email: string) => isEmailValid(email)
 
   _validateForm = () => {
     const { firstName, lastName, phone, email, telegram } = this._formData
@@ -142,16 +136,34 @@ class Profile extends React.PureComponent<Props, State> {
 
     const { imageUri } = this.state
     const { firstName, lastName, phone, email, telegram } = this._formData
-    this.props.profileStore.setFirstName(firstName)
-    this.props.profileStore.setLastName(lastName)
-    this.props.profileStore.setPhone(phone)
-    this.props.profileStore.setEmail(email)
-    this.props.profileStore.setTelegram(telegram)
-    this.props.profileStore.setAvatar(imageUri)
+    const {
+      profileStore: {
+        setFirstName,
+        setLastName,
+        setPhone,
+        setEmail,
+        setTelegram,
+        setAvatar,
+        saveProfile
+      }
+    } = this.props
+    setFirstName(firstName)
+    setLastName(lastName)
+    setPhone(phone)
+    setEmail(email)
+    setTelegram(telegram)
+    if (imageUri) {
+      setAvatar(imageUri)
+    }
 
-    await this.props.profileStore.save()
-    this.setState({ isFormSaving: false })
-    this.props.navigation.goBack()
+    await saveProfile()
+    const {
+      navigation: { goBack }
+    } = this.props
+    // Emulate long operation
+    setTimeout(() => {
+      goBack()
+    }, 2000)
   }
 
   _onConnect = () => {
@@ -161,25 +173,23 @@ class Profile extends React.PureComponent<Props, State> {
   render() {
     const { imageUri, isFormValid, currentField, isFormSaving } = this.state
     const {
-      firstName,
-      lastName,
-      phone,
-      email,
-      telegram
-    } = this.props.profileStore
+      profileStore: { firstName, lastName, phone, email, telegram }
+    } = this.props
 
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.flex}>
         <KeyboardAwareScrollView
           contentContainerStyle={styles.container}
           keyboardOpeningTime={0}
           bounces={false}
           keyboardShouldPersistTaps="always"
           showsVerticalScrollIndicator={false}
-          extraHeight={100}
+          extraHeight={isIPhoneX() ? 124 : 80}
         >
           <ScrollView
-            ref={ref => (this._refScroll = ref)}
+            ref={ref => {
+              this._refScroll = ref
+            }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="always"
           >
@@ -192,6 +202,7 @@ class Profile extends React.PureComponent<Props, State> {
             </TouchableOpacity>
             <TextInputField
               name="firstName"
+              label="First Name"
               placeholder="First Name"
               defaultValue={firstName}
               onSubmitEditing={this._onSubmit}
@@ -201,6 +212,7 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="lastName"
+              label="Last Name"
               placeholder="Last Name"
               defaultValue={lastName}
               shouldFocus={currentField === 'lastName'}
@@ -211,6 +223,7 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="phone"
+              label="Phone"
               placeholder="Phone"
               defaultValue={phone}
               shouldFocus={currentField === 'phone'}
@@ -223,6 +236,7 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="email"
+              label="Email"
               placeholder="Email"
               defaultValue={email}
               shouldFocus={currentField === 'email'}
@@ -236,6 +250,7 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="telegram"
+              label="Telegram"
               placeholder="Telegram"
               defaultValue={telegram}
               shouldFocus={currentField === 'telegram'}
@@ -245,29 +260,35 @@ class Profile extends React.PureComponent<Props, State> {
               buttonTitle="Connect"
               onButton={this._onConnect}
               disabled={isFormSaving}
-            />
-            <View style={styles.bottomGap} />
-            <Button
-              style={styles.button}
-              title="Save"
-              disabled={!isFormValid}
-              onPress={this._onSave}
-              inProgress={isFormSaving}
+              style={styles.lastInput}
             />
           </ScrollView>
         </KeyboardAwareScrollView>
+        <View style={styles.buttonContainer}>
+          <Button
+            style={styles.button}
+            title="Save"
+            disabled={isFormSaving || !isFormValid}
+            onPress={this._onSave}
+            inProgress={isFormSaving}
+          />
+        </View>
       </SafeAreaView>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1
+  },
   container: {
     flex: 1,
     paddingHorizontal: 16
   },
   title: {
     fontSize: 24,
+    lineHeight: 32,
     fontWeight: 'bold',
     marginTop: 16
   },
@@ -287,13 +308,21 @@ const styles = StyleSheet.create({
   },
   uploadPhoto: {
     fontSize: 16,
+    lineHeight: 20,
     color: '#0088CC'
   },
-  bottomGap: {
-    marginBottom: 32
+  lastInput: {
+    marginBottom: 88
+  },
+  buttonContainer: {
+    position: 'absolute',
+    width: Dimensions.get('window').width,
+    bottom: 0,
+    backgroundColor: 'white',
+    paddingVertical: 8
   },
   button: {
-    marginBottom: 16
+    paddingHorizontal: 16
   }
 })
 

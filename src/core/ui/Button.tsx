@@ -1,17 +1,12 @@
 import React from 'react'
-import {
-  TouchableWithoutFeedback,
-  View,
-  StyleSheet,
-  Text,
-  ActivityIndicator
-} from 'react-native'
+import { TouchableWithoutFeedback, View, StyleSheet, Text } from 'react-native'
+import Progress from './Progress'
 
 interface Props {
   title: string
   disabled?: boolean
   onPress?: () => void
-  style: any
+  style?: React.CSSProperties
   inProgress?: boolean
 }
 
@@ -47,25 +42,37 @@ class Button extends React.PureComponent<Props, State> {
     const { style, title, disabled, inProgress } = this.props
     const { isPressed } = this.state
 
+    let backgroundColor = '#0088CC'
+    if (disabled) {
+      backgroundColor = '#CED2D5'
+    } else if (isPressed) {
+      backgroundColor = '#325883'
+    }
+
     return (
-      <TouchableWithoutFeedback
-        onPressIn={this._onPressIn}
-        onPressOut={this._onPressOut}
-      >
-        <View
-          style={[
-            styles.container,
-            isPressed && styles.buttonPressed,
-            disabled && styles.buttonDisabled,
-            style
-          ]}
+      <View style={style}>
+        <TouchableWithoutFeedback
+          onPressIn={this._onPressIn}
+          onPressOut={this._onPressOut}
         >
-          {inProgress && (
-            <ActivityIndicator color="white" style={styles.indicator} />
-          )}
-          <Text style={styles.title}>{title}</Text>
-        </View>
-      </TouchableWithoutFeedback>
+          <View
+            style={[
+              styles.container,
+              isPressed && styles.buttonPressed,
+              disabled && styles.buttonDisabled
+            ]}
+          >
+            {inProgress && (
+              <Progress
+                color="white"
+                backgroundColor={backgroundColor}
+                style={styles.indicator}
+              />
+            )}
+            <Text style={styles.title}>{title}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
     )
   }
 }
@@ -81,7 +88,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#0088CC'
   },
   title: {
-    color: 'white'
+    color: 'white',
+    fontSize: 16,
+    lineHeight: 20
   },
   buttonPressed: {
     backgroundColor: '#325883'

@@ -7,29 +7,37 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native'
+import { NavigationScreenProps } from 'react-navigation-stack'
 import { inject, observer } from 'mobx-react'
 import * as Animatable from 'react-native-animatable'
 import ProfileIcon from '../core/ui/icons/Profile'
+import ProfileStore from './stores/ProfileStore'
 
 type Props = {
-  navigation: any
-  profileStore: any
+  navigation: NavigationScreenProps
+  profileStore: ProfileStore
 }
 
 const AVATAR_SIZE = Dimensions.get('window').width / 2.5
 const MARGIN = Dimensions.get('window').width / 18
 
 class Welcome extends React.PureComponent<Props> {
+  // eslint-disable-next-line
   static navigationOptions = {
     header: null
   }
 
   _onAvatar = () => {
-    this.props.navigation.navigate('Profile')
+    const {
+      navigation: { navigate }
+    } = this.props
+    navigate('Profile')
   }
 
   render() {
-    const { firstName, avatar } = this.props.profileStore
+    const {
+      profileStore: { firstName, avatar }
+    } = this.props
     const message = firstName ? `Welcome back ${firstName}!` : 'Welcome!'
 
     return (

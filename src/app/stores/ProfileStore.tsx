@@ -9,20 +9,22 @@ export default class ProfileStore {
   @observable telegram = ''
   @observable avatar = ''
 
-  @action async save() {
+  @action async saveProfile() {
     try {
       await AsyncStorage.setItem('ProfileStore:firstName', this.firstName)
       await AsyncStorage.setItem('ProfileStore:lastName', this.lastName)
       await AsyncStorage.setItem('ProfileStore:phone', this.phone)
       await AsyncStorage.setItem('ProfileStore:email', this.email)
       await AsyncStorage.setItem('ProfileStore:telegram', this.telegram)
-      await AsyncStorage.setItem('ProfileStore:avatar', this.avatar)
+      if (this.avatar) {
+        await AsyncStorage.setItem('ProfileStore:avatar', this.avatar)
+      }
     } catch (e) {
       console.log('Error save profile', e)
     }
   }
 
-  @action async load() {
+  @action async loadProfile() {
     try {
       this.firstName = await AsyncStorage.getItem('ProfileStore:firstName')
       this.lastName = await AsyncStorage.getItem('ProfileStore:lastName')

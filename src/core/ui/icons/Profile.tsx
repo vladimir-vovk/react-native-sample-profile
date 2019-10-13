@@ -2,14 +2,14 @@ import React from 'react'
 import { View } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
 
-type Props = {
-  width?: number,
-  height?: number,
-  rotate?: number,
-  style?: any
+interface Props {
+  width?: number
+  height?: number
+  rotate?: number
+  style?: React.CSSProperties
 }
 
-export default function ProfileIcon ({
+export default function ProfileIcon({
   width = 48,
   height = 48,
   rotate = 0,
@@ -18,10 +18,7 @@ export default function ProfileIcon ({
   return (
     <View style={style}>
       <Svg rotation={rotate} width={width} height={height} viewBox="0 0 48 48">
-        <Path
-          fill="#ede7f6"
-          d="M24 4A20 20 0 1 0 24 44A20 20 0 1 0 24 4Z"
-        />
+        <Path fill="#ede7f6" d="M24 4A20 20 0 1 0 24 44A20 20 0 1 0 24 4Z" />
         <Path
           fill="#4e342e"
           d="M24,44c4.669,0,8.955-1.613,12.358-4.295C34.647,35.388,31.153,31,24,31s-10.647,4.388-12.358,8.705C15.045,42.387,19.33,44,24,44z"
@@ -42,10 +39,7 @@ export default function ProfileIcon ({
           fill="#5d4037"
           d="M24,31c0,0-0.156,3-3,3c0,0,0.789,1,3,1c2.242,0,3-1,3-1C24.031,34,24,31,24,31z"
         />
-        <Path
-          fill="#263238"
-          d="M24 32L22 30 22 29 26 29 26 30z"
-        />
+        <Path fill="#263238" d="M24 32L22 30 22 29 26 29 26 30z" />
         <Path
           fill="#ffeb3b"
           d="M33 22c0 0 .596 6-3.54 6C27.551 28 26 28 26 28s-.231-6 4-6C31.911 22 33 22 33 22zM22.002 28c0 0 .596-6-3.54-6-1.909 0-3.46 0-3.46 0s-.231 6 4 6C20.913 28 22.002 28 22.002 28z"

@@ -10,11 +10,12 @@ import {
 
 interface Props {
   name?: string
+  label?: string
   defaultValue?: string
   placeholder?: string
   onChangeText?: (text: string, name: string) => void
   onSubmitEditing?: (name: string) => void
-  style?: any
+  style?: React.CSSProperties
   shouldFocus?: boolean
   keyboardType?: KeyboardType
   validator?: (value: string) => boolean
@@ -31,21 +32,39 @@ interface State {
   inputHeight: number
   buttonWidth: number
   buttonHeight: number
+  value: string
 }
 
 class TextInputField extends React.PureComponent<Props, State> {
   private _ref: TextInput
-  state = {
-    isFocused: false,
-    isValid: true,
-    inputHeight: 0,
-    buttonWidth: 0,
-    buttonHeight: 0
+
+  constructor(props: Props) {
+    super(props)
+
+    const { defaultValue } = props
+    this.state = {
+      isFocused: false,
+      isValid: true,
+      inputHeight: 0,
+      buttonWidth: 0,
+      buttonHeight: 0,
+      value: defaultValue
+    }
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { shouldFocus: prevShouldFocus } = prevProps
+    const { shouldFocus } = this.props
+    if (shouldFocus && !prevShouldFocus) {
+      this._ref.focus()
+    }
   }
 
   _onChangeText = (text: string) => {
     const { validator, onChangeText, name } = this.props
     const { isValid } = this.state
+
+    this.setState({ value: text })
 
     if (onChangeText) {
       onChangeText(text, name)
@@ -53,10 +72,8 @@ class TextInputField extends React.PureComponent<Props, State> {
     if (validator) {
       if (text) {
         this.setState({ isValid: validator(text) })
-      } else {
-        if (!isValid) {
-          this.setState({ isValid: true })
-        }
+      } else if (!isValid) {
+        this.setState({ isValid: true })
       }
     }
   }
@@ -65,14 +82,6 @@ class TextInputField extends React.PureComponent<Props, State> {
     const { onSubmitEditing, name } = this.props
     if (onSubmitEditing) {
       onSubmitEditing(name)
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    const { shouldFocus: prevShouldFocus } = prevProps
-    const { name, shouldFocus } = this.props
-    if (shouldFocus && !prevShouldFocus) {
-      this._ref.focus()
     }
   }
 
@@ -118,21 +127,26 @@ class TextInputField extends React.PureComponent<Props, State> {
       placeholder,
       style,
       buttonTitle,
-      disabled
+      disabled,
+      label
     } = this.props
     const {
       buttonWidth,
       buttonHeight,
       inputHeight,
       isValid,
-      isFocused
+      isFocused,
+      value
     } = this.state
 
     return (
       <View>
+        {value ? <Text style={styles.label}>{label}</Text> : null}
         <TextInput
           onLayout={this._onInputLayout}
-          ref={ref => (this._ref = ref)}
+          ref={ref => {
+            this._ref = ref
+          }}
           defaultValue={defaultValue}
           placeholder={placeholder}
           selectionColor="black"
@@ -156,11 +170,10 @@ class TextInputField extends React.PureComponent<Props, State> {
         {buttonTitle && (
           <TouchableOpacity
             onPress={this._onButton}
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: inputHeight / 2 - buttonHeight / 2
-            }}
+            style={[
+              styles.buttonContainer,
+              { top: inputHeight / 2 - buttonHeight / 2 }
+            ]}
             onLayout={this._onButtonLayout}
           >
             <Text style={styles.button}>{buttonTitle}</Text>
@@ -178,7 +191,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#DDE1E2',
     width: '100%',
-    fontSize: 18
+    fontSize: 18,
+    lineHeight: 24,
+    height: 40
   },
   focused: {
     borderBottomColor: '#0088CC'
@@ -187,9 +202,21 @@ const styles = StyleSheet.create({
     borderBottomColor: 'red'
   },
   disabled: {},
+  buttonContainer: {
+    position: 'absolute',
+    right: 0
+  },
   button: {
     color: '#0088CC',
-    fontSize: 16
+    fontSize: 16,
+    lineHeight: 24
+  },
+  label: {
+    position: 'absolute',
+    left: 0,
+    top: -16,
+    fontSize: 12,
+    color: '#B1B8BC'
   }
 })
 
