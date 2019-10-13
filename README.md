@@ -13,7 +13,23 @@ An example of a profile form with a simple validation for React Native. Please f
 
 ## Expo
 
-You can also run this app with [Expo](https://expo.io/@vladimir_vovk/react-native-sample-profile).
+You can also run this app with [Expo](https://expo.io/@vladimir_vovk/react-native-sample-profile.
+
+## Troubleshooting
+
+- undefined is not an object (evaluating 'expo Localization.Localization.locale')
+
+```
+... go to settings > general > language and region in your iOS simulator and update region setting.
+```
+
+https://github.com/expo/expo/issues/5735#issuecomment-534063072
+
+## Features
+
+- Manage app's state with [mobx](https://mobx.js.org)
+- Localization with [i18n-js](https://docs.expo.io/versions/latest/sdk/localization/)
+- Form management with [React Hook Form](https://react-hook-form.com/)
 
 ## Credits
 

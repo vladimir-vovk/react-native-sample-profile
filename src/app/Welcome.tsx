@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native'
+import i18n from 'i18n-js'
 import { NavigationScreenProps } from 'react-navigation-stack'
 import { inject, observer } from 'mobx-react'
 import * as Animatable from 'react-native-animatable'
@@ -38,7 +39,9 @@ class Welcome extends React.PureComponent<Props> {
     const {
       profileStore: { firstName, avatar }
     } = this.props
-    const message = firstName ? `Welcome back ${firstName}!` : 'Welcome!'
+    const message = firstName
+      ? i18n.t('welcome.name', { firstName })
+      : i18n.t('welcome.empty')
 
     return (
       <View style={styles.container}>
@@ -54,9 +57,7 @@ class Welcome extends React.PureComponent<Props> {
           </TouchableOpacity>
           <Text style={styles.message}>{message}</Text>
           {!firstName && (
-            <Text style={styles.help}>
-              Tap on the image to set up you profile
-            </Text>
+            <Text style={styles.help}>{i18n.t('welcome.hint')}</Text>
           )}
         </Animatable.View>
       </View>
@@ -99,7 +100,10 @@ const styles = StyleSheet.create({
   help: {
     marginTop: 64,
     paddingHorizontal: 16,
-    textAlign: 'center'
+    textAlign: 'center',
+    lineHeight: 24,
+    fontSize: 16,
+    fontWeight: '200'
   }
 })
 

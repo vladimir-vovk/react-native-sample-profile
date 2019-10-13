@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { NavigationScreenProps } from 'react-navigation-stack'
 import { inject, observer } from 'mobx-react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import i18n from 'i18n-js'
 import { TextInputField, Button } from '../core/ui'
 import { isIPhoneX, isPhoneValid, isEmailValid } from '../core/utils'
 import ProfileStore from './stores/ProfileStore'
@@ -175,6 +176,7 @@ class Profile extends React.PureComponent<Props, State> {
     const {
       profileStore: { firstName, lastName, phone, email, telegram }
     } = this.props
+    const uri = imageUri || null
 
     return (
       <SafeAreaView style={styles.flex}>
@@ -193,17 +195,19 @@ class Profile extends React.PureComponent<Props, State> {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="always"
           >
-            <Text style={styles.title}>Edit Profile</Text>
+            <Text style={styles.title}>{i18n.t('profile.title')}</Text>
             <TouchableOpacity onPress={this._onAvatar} disabled={isFormSaving}>
               <View style={styles.avatarContainer}>
-                <Image source={{ uri: imageUri }} style={styles.avatar} />
-                <Text style={styles.uploadPhoto}>Upload photo</Text>
+                <Image source={{ uri }} style={styles.avatar} />
+                <Text style={styles.uploadPhoto}>
+                  {i18n.t('profile.photo')}
+                </Text>
               </View>
             </TouchableOpacity>
             <TextInputField
               name="firstName"
-              label="First Name"
-              placeholder="First Name"
+              label={i18n.t('profile.firstName')}
+              placeholder={i18n.t('profile.firstName')}
               defaultValue={firstName}
               onSubmitEditing={this._onSubmit}
               onChangeText={this._onChangeText}
@@ -212,8 +216,8 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="lastName"
-              label="Last Name"
-              placeholder="Last Name"
+              label={i18n.t('profile.lastName')}
+              placeholder={i18n.t('profile.lastName')}
               defaultValue={lastName}
               shouldFocus={currentField === 'lastName'}
               onSubmitEditing={this._onSubmit}
@@ -223,8 +227,8 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="phone"
-              label="Phone"
-              placeholder="Phone"
+              label={i18n.t('profile.phone')}
+              placeholder={i18n.t('profile.phone')}
               defaultValue={phone}
               shouldFocus={currentField === 'phone'}
               onSubmitEditing={this._onSubmit}
@@ -236,8 +240,8 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="email"
-              label="Email"
-              placeholder="Email"
+              label={i18n.t('profile.email')}
+              placeholder={i18n.t('profile.email')}
               defaultValue={email}
               shouldFocus={currentField === 'email'}
               onSubmitEditing={this._onSubmit}
@@ -250,8 +254,8 @@ class Profile extends React.PureComponent<Props, State> {
             />
             <TextInputField
               name="telegram"
-              label="Telegram"
-              placeholder="Telegram"
+              label={i18n.t('profile.telegram')}
+              placeholder={i18n.t('profile.telegram')}
               defaultValue={telegram}
               shouldFocus={currentField === 'telegram'}
               onSubmitEditing={this._onSubmit}
@@ -267,7 +271,7 @@ class Profile extends React.PureComponent<Props, State> {
         <View style={styles.buttonContainer}>
           <Button
             style={styles.button}
-            title="Save"
+            title={i18n.t('profile.save')}
             disabled={isFormSaving || !isFormValid}
             onPress={this._onSave}
             inProgress={isFormSaving}
@@ -319,7 +323,8 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     bottom: 0,
     backgroundColor: 'white',
-    paddingVertical: 8
+    paddingVertical: 8,
+    marginBottom: isIPhoneX() ? 16 : 0
   },
   button: {
     paddingHorizontal: 16
