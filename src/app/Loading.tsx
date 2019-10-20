@@ -18,10 +18,8 @@ class Loading extends React.Component<Props> {
 
   async componentDidMount() {
     try {
-      const {
-        profileStore: { loadProfile }
-      } = this.props
-      await loadProfile()
+      const { profileStore } = this.props
+      await profileStore.loadProfile()
     } catch (error) {
       console.log('Error restore data:', error.message)
     }

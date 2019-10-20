@@ -137,27 +137,17 @@ class Profile extends React.PureComponent<Props, State> {
 
     const { imageUri } = this.state
     const { firstName, lastName, phone, email, telegram } = this._formData
-    const {
-      profileStore: {
-        setFirstName,
-        setLastName,
-        setPhone,
-        setEmail,
-        setTelegram,
-        setAvatar,
-        saveProfile
-      }
-    } = this.props
-    setFirstName(firstName)
-    setLastName(lastName)
-    setPhone(phone)
-    setEmail(email)
-    setTelegram(telegram)
+    const { profileStore } = this.props
+    profileStore.setFirstName(firstName)
+    profileStore.setLastName(lastName)
+    profileStore.setPhone(phone)
+    profileStore.setEmail(email)
+    profileStore.setTelegram(telegram)
     if (imageUri) {
-      setAvatar(imageUri)
+      profileStore.setAvatar(imageUri)
     }
 
-    await saveProfile()
+    await profileStore.saveProfile()
     const {
       navigation: { goBack }
     } = this.props
