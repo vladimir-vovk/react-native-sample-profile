@@ -9,7 +9,7 @@ export default class ProfileStore {
   @observable telegram = ''
   @observable avatar = ''
 
-  @action async saveProfile() {
+  @action saveProfile = async () => {
     try {
       await AsyncStorage.setItem('ProfileStore:firstName', this.firstName)
       await AsyncStorage.setItem('ProfileStore:lastName', this.lastName)
@@ -24,7 +24,7 @@ export default class ProfileStore {
     }
   }
 
-  @action async loadProfile() {
+  @action loadProfile = async () => {
     try {
       this.firstName = await AsyncStorage.getItem('ProfileStore:firstName')
       this.lastName = await AsyncStorage.getItem('ProfileStore:lastName')
@@ -37,27 +37,27 @@ export default class ProfileStore {
     }
   }
 
-  @action setFirstName(firstName: string) {
+  @action setFirstName = (firstName: string) => {
     this.firstName = firstName
   }
 
-  @action setLastName(lastName: string) {
+  @action setLastName = (lastName: string) => {
     this.lastName = lastName
   }
 
-  @action setPhone(phone: string) {
+  @action setPhone = (phone: string) => {
     this.phone = phone
   }
 
-  @action setEmail(email: string) {
+  @action setEmail = (email: string) => {
     this.email = email
   }
 
-  @action setTelegram(telegram: string) {
+  @action setTelegram = (telegram: string) => {
     this.telegram = telegram
   }
 
-  @action setAvatar(avatar: string) {
+  @action setAvatar = (avatar: string) => {
     this.avatar = avatar
   }
 }
