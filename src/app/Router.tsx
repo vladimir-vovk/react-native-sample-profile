@@ -5,16 +5,19 @@ import Loading from './Loading'
 import Welcome from './Welcome'
 import Profile from './Profile'
 
-const App = createStackNavigator({
-  Welcome,
-  Profile
-}, {
-  defaultNavigationOptions: {
-    headerBackImage: BackButton,
-    headerBackTitle: null,
-    headerStyle: { borderBottomWidth: 0, height: 56 }
+const App = createStackNavigator(
+  {
+    Welcome,
+    Profile
+  },
+  {
+    defaultNavigationOptions: {
+      headerBackImage: BackButton,
+      headerBackTitle: null,
+      headerStyle: { borderBottomWidth: 0, height: 56 }
+    }
   }
-})
+)
 
 const RootStack = createSwitchNavigator({
   Loading,
