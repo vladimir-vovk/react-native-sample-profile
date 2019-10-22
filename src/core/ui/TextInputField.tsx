@@ -9,16 +9,18 @@ import {
 } from 'react-native'
 
 interface Props {
+  register?: any
   name?: string
   label?: string
   defaultValue?: string
+  required?: boolean
   placeholder?: string
   onChangeText?: (text: string, name: string) => void
   onSubmitEditing?: (name: string) => void
   style?: React.CSSProperties
   shouldFocus?: boolean
   keyboardType?: KeyboardType
-  validator?: (value: string) => boolean
+  validate?: (value: string) => boolean
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
   autoCompleteType?: string
   buttonTitle?: string
@@ -61,7 +63,7 @@ class TextInputField extends React.PureComponent<Props, State> {
   }
 
   _onChangeText = (text: string) => {
-    const { validator, onChangeText, name } = this.props
+    const { validate, onChangeText, name } = this.props
     const { isValid } = this.state
 
     this.setState({ value: text })
@@ -69,9 +71,9 @@ class TextInputField extends React.PureComponent<Props, State> {
     if (onChangeText) {
       onChangeText(text, name)
     }
-    if (validator) {
+    if (validate) {
       if (text) {
-        this.setState({ isValid: validator(text) })
+        this.setState({ isValid: validate(text) })
       } else if (!isValid) {
         this.setState({ isValid: true })
       }
@@ -118,6 +120,15 @@ class TextInputField extends React.PureComponent<Props, State> {
     }
   }
 
+  _onRef = ref => {
+    const { register, name, validate, required } = this.props
+
+    this._ref = ref
+    if (register) {
+      register({ name, validate }, { required })
+    }
+  }
+
   render() {
     const {
       autoCompleteType,
@@ -144,9 +155,7 @@ class TextInputField extends React.PureComponent<Props, State> {
         {value ? <Text style={styles.label}>{label}</Text> : null}
         <TextInput
           onLayout={this._onInputLayout}
-          ref={ref => {
-            this._ref = ref
-          }}
+          ref={this._onRef}
           defaultValue={defaultValue}
           placeholder={placeholder}
           selectionColor="black"
